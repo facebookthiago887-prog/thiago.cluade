@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LimSur Premium</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#06140c;color:white}
+header{padding:50px 24px;background:radial-gradient(circle at top,#1d6b3a55,transparent 45%),linear-gradient(180deg,#0b2c18,#06140c)}
+.wrap{max-width:1200px;margin:auto}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center}
+h1{font-size:82px;margin:0}
+h1 span{color:#43e97b}
+.subtitle{color:#d4ffe0;font-size:18px;line-height:1.6}
+.promo{background:linear-gradient(135deg,#fff,#dfffe9);color:#08351b;padding:30px;border-radius:28px;box-shadow:0 20px 50px #0006}
+.promoPrice{background:#16a34a;color:white;padding:14px;border-radius:18px;font-size:34px;font-weight:bold;text-align:center}
+.notice{margin-top:20px;background:#123b24;border:1px solid #2f6c48;padding:14px;border-radius:18px;color:#d9ffe8}
+.topbar{position:sticky;top:0;z-index:10;background:#06140ce8;backdrop-filter:blur(10px);padding:18px 24px;border-bottom:1px solid #ffffff18}
+.filters{display:flex;gap:10px;flex-wrap:wrap;max-width:1200px;margin:auto}
+.filters button{background:#173625;color:white;border:none;padding:12px 16px;border-radius:14px;font-weight:bold;cursor:pointer}
+.filters button.active{background:#22c55e;color:white}
+.search{width:100%;padding:16px;border-radius:16px;border:1px solid #31513c;background:#11281c;color:white;margin:16px auto 0;display:block;max-width:1200px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;padding:24px}
+.card{background:#102018;border-radius:24px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.45);transition:.2s;border:1px solid #ffffff14}
+.card:hover{transform:translateY(-4px);background:#163323}
+.card img{width:100%;height:250px;object-fit:contain;background:white;padding:8px}
+.content{padding:18px}
+.price{font-size:24px;font-weight:bold;color:#4ade80}
+.pill{display:inline-block;background:#22c55e33;color:#bbf7d0;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:bold;margin-bottom:8px}
+button.add{width:100%;padding:14px;border:none;border-radius:14px;background:#22c55e;color:white;font-weight:bold;margin-top:14px;cursor:pointer}
+.cart{position:fixed;right:18px;bottom:18px;width:360px;max-width:calc(100% - 36px);background:#ecfff2;color:#062313;border-radius:24px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.55);z-index:20}
+.cart-item{border-bottom:1px solid #cfe7d7;padding:10px 0}
+.total{font-size:24px;font-weight:bold;margin-top:16px}
+.whatsapp{display:block;text-align:center;background:#22c55e;color:white;padding:14px;border-radius:14px;text-decoration:none;font-weight:bold;margin-top:16px}
+footer{padding:30px;text-align:center;color:#9bc8a7}
+@media(max-width:800px){.hero{grid-template-columns:1fr}h1{font-size:58px}.cart{position:static;width:auto;margin:20px}}
+
+/* Botón admin flotante */
+#adminBtn{position:fixed;left:18px;bottom:18px;background:#173625;color:#4ade80;border:1px solid #2f6c48;padding:10px 18px;border-radius:14px;font-weight:bold;font-size:14px;cursor:pointer;z-index:30}
+#adminBtn:hover{background:#1f4a30}
+
+/* Overlay del panel admin */
+#adminOverlay{display:none;position:fixed;inset:0;background:#000000cc;z-index:40;overflow-y:auto}
+#adminPanel{background:#0d2419;margin:40px auto;max-width:780px;border-radius:28px;padding:32px;border:1px solid #2f6c48}
+#adminPanel h2{margin:0 0 8px;color:#4ade80;font-size:28px}
+#adminPanel p{color:#9bc8a7;margin:0 0 24px}
+.admin-search{width:100%;padding:14px;border-radius:14px;border:1px solid #31513c;background:#11281c;color:white;margin-bottom:20px;font-size:15px}
+.admin-table{width:100%;border-collapse:collapse}
+.admin-table th{text-align:left;color:#9bc8a7;font-size:13px;padding:8px 10px;border-bottom:1px solid #2f6c48}
+.admin-table td{padding:10px;border-bottom:1px solid #1a3a27;vertical-align:middle}
+.admin-table tr:last-child td{border-bottom:none}
+.price-input{background:#11281c;border:1px solid #31513c;color:white;border-radius:10px;padding:8px 12px;font-size:15px;width:150px}
+.price-input:focus{outline:none;border-color:#22c55e}
+.badge-cat{display:inline-block;background:#22c55e22;color:#86efac;border-radius:999px;padding:3px 10px;font-size:12px}
+.save-row{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;align-items:center}
+.btn-save{background:#22c55e;color:white;border:none;padding:14px 28px;border-radius:14px;font-weight:bold;font-size:16px;cursor:pointer}
+.btn-save:hover{background:#16a34a}
+.btn-reset{background:#173625;color:#f87171;border:1px solid #7f1d1d;padding:14px 20px;border-radius:14px;font-weight:bold;font-size:14px;cursor:pointer}
+.btn-reset:hover{background:#1f1010}
+.btn-close{background:transparent;color:#9bc8a7;border:1px solid #2f6c48;padding:14px 20px;border-radius:14px;font-weight:bold;font-size:14px;cursor:pointer}
+.btn-close:hover{color:white}
+.saved-msg{color:#4ade80;font-size:14px;font-weight:bold;display:none}
+
+/* Login */
+#loginBox{background:#0d2419;margin:120px auto;max-width:380px;border-radius:28px;padding:36px;border:1px solid #2f6c48;text-align:center}
+#loginBox h2{color:#4ade80;margin:0 0 8px}
+#loginBox p{color:#9bc8a7;margin:0 0 24px;font-size:14px}
+#loginPass{width:100%;padding:14px;border-radius:14px;border:1px solid #31513c;background:#11281c;color:white;font-size:16px;text-align:center;margin-bottom:12px}
+#loginPass:focus{outline:none;border-color:#22c55e}
+#loginBtn{width:100%;background:#22c55e;color:white;border:none;padding:14px;border-radius:14px;font-weight:bold;font-size:16px;cursor:pointer}
+#loginBtn:hover{background:#16a34a}
+#loginErr{color:#f87171;font-size:14px;margin-top:10px;display:none}
+</style>
+</head>
+<body>
+
+<header>
+<div class="wrap hero">
+<div>
+<h1>Lim<span>Sur</span></h1>
+<p class="subtitle">Catálogo online premium · Productos de limpieza, perfumería, sahumerios y más.</p>
+<div class="notice">💚 Promo destacada: Suavizante + Jabón líquido Lumika a <b>$18.600</b>.</div>
+</div>
+<div class="promo">
+<h2>✨ Promo especial</h2>
+<p>Suavizante Concentrado + Jabón Líquido Baja Espuma</p>
+<div class="promoPrice">$18.600</div>
+</div>
+</div>
+</header>
+
+<div class="topbar">
+<div class="filters" id="filters"></div>
+<input class="search" id="search" placeholder="Buscar productos...">
+</div>
+
+<div class="wrap">
+<h2 id="sectionTitle" style="padding:24px 24px 0">Todos los productos</h2>
+<div class="grid" id="grid"></div>
+</div>
+
+<div class="cart" id="cart">
+<h2>🛒 Tu pedido</h2>
+<div id="cartItems"></div>
+<div class="total" id="total">0 productos</div>
+<a class="whatsapp" id="wa" target="_blank">Enviar pedido por WhatsApp</a>
+</div>
+
+<button id="adminBtn" onclick="openAdmin()">⚙ Admin</button>
+
+<!-- Panel de administración -->
+<div id="adminOverlay">
+
+  <!-- Login -->
+  <div id="loginBox">
+    <h2>🔒 Panel admin</h2>
+    <p>Ingresá la contraseña para editar precios</p>
+    <input type="password" id="loginPass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')tryLogin()">
+    <button id="loginBtn" onclick="tryLogin()">Ingresar</button>
+    <div id="loginErr">Contraseña incorrecta</div>
+  </div>
+
+  <!-- Panel de precios -->
+  <div id="adminPanel" style="display:none">
+    <h2>⚙ Editar precios</h2>
+    <p>Los cambios se guardan en este navegador. Escribí el precio o dejá "Consultar".</p>
+    <input class="admin-search" id="adminSearch" placeholder="Buscar producto..." oninput="renderAdminTable()">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+        </tr>
+      </thead>
+      <tbody id="adminBody"></tbody>
+    </table>
+    <div class="save-row">
+      <button class="btn-save" onclick="savePrices()">💾 Guardar precios</button>
+      <button class="btn-reset" onclick="resetPrices()">↩ Borrar cambios guardados</button>
+      <button class="btn-close" onclick="closeAdmin()">✕ Cerrar</button>
+      <span class="saved-msg" id="savedMsg">✓ ¡Guardado!</span>
+    </div>
+  </div>
+
+</div>
+
+<footer>📍 Ushuaia · LimSur · WhatsApp 2901 501798</footer>
+
+<script>
+const ADMIN_PASS = "limsur2025";
+const STORAGE_KEY = "limsur_prices";
+
+const productsBase = [{"name":"Alcohol Purocol","image":"productos/alcohol-purocol.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Axe Marine","image":"productos/axe-marine.jpg","price":"Consultar","cat":"Perfumería"},{"name":"Ayudin Expert","image":"productos/ayudin-expert.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Blem Cuidado Plastifiocado Flotante","image":"productos/blem-cuidado-plastifiocado-flotante.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Blem Limpieza Multisuperficies","image":"productos/blem-limpieza-multisuperficies.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Blem Lustramuebles","image":"productos/blem-lustramuebles.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Ceramicol","image":"productos/ceramicol.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Ceramicol Autobrillo","image":"productos/ceramicol-autobrillo.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Cif Bioactive Desengrasante","image":"productos/cif-bioactive-desengrasante.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Cif Crema Lavandina","image":"productos/cif-crema-lavandina.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Cif Crema Multiuso","image":"productos/cif-crema-multiuso.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Colgate 180","image":"productos/colgate-180.jpg","price":"Consultar","cat":"Perfumería"},{"name":"Colgate 50","image":"productos/colgate-50.jpg","price":"Consultar","cat":"Perfumería"},{"name":"Colgate Kids","image":"productos/colgate-kids.jpg","price":"Consultar","cat":"Perfumería"},{"name":"Desengrasante","image":"productos/desengrasante.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Desinfectante Piso","image":"productos/desinfectante-piso.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Detergente","image":"productos/detergente.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Echo En Balde","image":"productos/echo-en-balde.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Ecomax","image":"productos/ecomax.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Glade","image":"productos/glade.jpg","price":"Consultar","cat":"Aromatizantes"},{"name":"Jabon Baja Espuma","image":"productos/jabon-baja-espuma.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Jabon Manos","image":"productos/jabon-manos.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Lysoform Aerosol","image":"productos/lysoform-aerosol.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Lysoform Baño","image":"productos/lysoform-bano.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Lysoform Desinfectante","image":"productos/lysoform-desinfectante.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Lysoform Desinfectante Concentrado","image":"productos/lysoform-desinfectante-concentrado.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Lysoform Power","image":"productos/lysoform-power.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Magistral","image":"productos/magistral.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Mr Musculo Baño (2)","image":"productos/mr-musculo-bano-2.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Mr Musculo Baño","image":"productos/mr-musculo-bano.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Mr Musculo Multiuso","image":"productos/mr-musculo-multiuso.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Mr Musculo Platinum","image":"productos/mr-musculo-platinum.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Mr Musculo Vidrios","image":"productos/mr-musculo-vidrios.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Nivea Men Espuma","image":"productos/nivea-men-espuma.jpg","price":"Consultar","cat":"Perfumería"},{"name":"Odex Polvo Limpiardo","image":"productos/odex-polvo-limpiardo.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Odol","image":"productos/odol.jpg","price":"Consultar","cat":"Perfumería"},{"name":"Poett","image":"productos/poett.jpg","price":"Consultar","cat":"Aromatizantes"},{"name":"Raid Jardin","image":"productos/raid-jardin.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Raid Mosquitos","image":"productos/raid-mosquitos.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Rejilla Americana","image":"productos/rejilla-americana.jpg","price":"Consultar","cat":"Esponjas y rejillas"},{"name":"Rejilla Nido","image":"productos/rejilla-nido.jpg","price":"Consultar","cat":"Esponjas y rejillas"},{"name":"Rejilla Pabilo","image":"productos/rejilla-pabilo.jpg","price":"Consultar","cat":"Esponjas y rejillas"},{"name":"Repasador","image":"productos/repasador.jpg","price":"Consultar","cat":"Esponjas y rejillas"},{"name":"Saphifus Lola","image":"productos/saphifus-lola.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Saphirus Cereza","image":"productos/saphirus-cereza.jpg","price":"Consultar","cat":"Aromatizantes"},{"name":"Saphirus Flowers (2)","image":"productos/saphirus-flowers-2.jpg","price":"Consultar","cat":"Aromatizantes"},{"name":"Saphirus Lavanda","image":"productos/saphirus-lavanda.jpg","price":"Consultar","cat":"Aromatizantes"},{"name":"Saphirus Olympic","image":"productos/saphirus-olympic.jpg","price":"Consultar","cat":"Aromatizantes"},{"name":"Saphirus Paula","image":"productos/saphirus-paula.jpg","price":"Consultar","cat":"Aromatizantes"},{"name":"Saphirus Uva","image":"productos/saphirus-uva.jpg","price":"Consultar","cat":"Aromatizantes"},{"name":"Sedal Acondicionador","image":"productos/sedal-acondicionador.jpg","price":"Consultar","cat":"Perfumería"},{"name":"Sedal Balance Acondicionador","image":"productos/sedal-balance-acondicionador.jpg","price":"Consultar","cat":"Perfumería"},{"name":"Sedal Balance Shampoo","image":"productos/sedal-balance-shampoo.jpg","price":"Consultar","cat":"Perfumería"},{"name":"Sedal Shampoo","image":"productos/sedal-shampoo.jpg","price":"Consultar","cat":"Perfumería"},{"name":"Shampoo Auto","image":"productos/shampoo-auto.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Sina Lana Acero","image":"productos/sina-lana-acero.jpg","price":"Consultar","cat":"Esponjas y rejillas"},{"name":"Suavizante","image":"productos/suavizante.jpg","price":"Consultar","cat":"Limpieza"},{"name":"Tuk Tuk","image":"productos/tuk-tuk.jpg","price":"Consultar","cat":"Sahumerios"},
+{"name":"Palo Santo Atrae Dinero (Mini)","image":"productos/sahumerio-palo-santo-mini.jpg","price":"$2.200","cat":"Sahumerios"},
+{"name":"Palo Santo Energía Limpia (Mini)","image":"productos/sahumerio-palo-santo-mini.jpg","price":"$2.200","cat":"Sahumerios"},
+{"name":"Siete Chakras - Iluminarte","image":"productos/sahumerio-siete-chakras.jpg","price":"$6.000","cat":"Sahumerios"},
+{"name":"Palo Santo Sándalo - Natural Premium","image":"productos/sahumerio-natural-premium.jpg","price":"$4.500","cat":"Sahumerios"},
+{"name":"Palo Santo Ruda - Natural Premium","image":"productos/sahumerio-natural-premium.jpg","price":"$4.500","cat":"Sahumerios"},
+{"name":"Ruda | Romero | Olíbano - Natural Premium","image":"productos/sahumerio-natural-premium.jpg","price":"$4.500","cat":"Sahumerios"},
+{"name":"Palo Santo Fresias - Natural Premium","image":"productos/sahumerio-natural-premium.jpg","price":"$4.500","cat":"Sahumerios"},
+{"name":"Palo Santo Olíbano - Natural Premium","image":"productos/sahumerio-natural-premium.jpg","price":"$4.500","cat":"Sahumerios"},
+{"name":"Varillas Arcángeles","image":"productos/sahumerio-varillas.jpg","price":"$3.000","cat":"Sahumerios"},
+{"name":"Varillas Lluvia de Plata","image":"productos/sahumerio-varillas.jpg","price":"$3.000","cat":"Sahumerios"},
+{"name":"Varillas Aqua","image":"productos/sahumerio-varillas.jpg","price":"$3.000","cat":"Sahumerios"},
+{"name":"Varillas Mil Flores","image":"productos/sahumerio-varillas.jpg","price":"$3.000","cat":"Sahumerios"},
+{"name":"Varillas Feng Shui 5","image":"productos/sahumerio-varillas.jpg","price":"$3.000","cat":"Sahumerios"},
+{"name":"Varillas 7 Chakras","image":"productos/sahumerio-varillas.jpg","price":"$3.000","cat":"Sahumerios"},
+{"name":"Varillas Durazno","image":"productos/sahumerio-varillas.jpg","price":"$3.000","cat":"Sahumerios"},
+{"name":"Varillas Limón","image":"productos/sahumerio-varillas.jpg","price":"$3.000","cat":"Sahumerios"},
+{"name":"Varillas Palo Santo","image":"productos/sahumerio-varillas.jpg","price":"$3.000","cat":"Sahumerios"}];
+
+// Cargar precios guardados del localStorage
+function loadPrices() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const prices = JSON.parse(saved);
+      productsBase.forEach(p => {
+        if (prices[p.name] !== undefined) p.price = prices[p.name];
+      });
+    }
+  } catch(e) {}
+}
+
+loadPrices();
+const products = productsBase;
+
+let cart = [];
+let selectedCat = "Todos";
+
+function cats(){
+  return ["Todos", ...new Set(products.map(p => p.cat))];
+}
+
+function renderFilters(){
+  document.getElementById("filters").innerHTML = cats().map(c => `
+    <button class="${selectedCat === c ? "active" : ""}" onclick="selectedCat='${c}';renderProducts()">${c}</button>
+  `).join("");
+}
+
+function renderProducts(){
+  renderFilters();
+  const q = document.getElementById("search").value.toLowerCase();
+  const list = products.filter(p =>
+    (selectedCat === "Todos" || p.cat === selectedCat) &&
+    p.name.toLowerCase().includes(q)
+  );
+  document.getElementById("sectionTitle").innerText = selectedCat === "Todos" ? "Todos los productos" : selectedCat;
+  document.getElementById("grid").innerHTML = list.map(p => `
+    <div class="card">
+      <img src="${p.image}">
+      <div class="content">
+        <span class="pill">${p.cat}</span>
+        <h3>${p.name}</h3>
+        <div class="price">${p.price}</div>
+        <button class="add" onclick="addToCart('${p.name.replaceAll("'","")}')">Agregar al carrito</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function addToCart(name){
+  const p = products.find(x => x.name.replaceAll("'","") === name);
+  if(!p) return;
+  cart.push(p);
+  renderCart();
+}
+
+function renderCart(){
+  const grouped = [];
+  cart.forEach(p => {
+    const found = grouped.find(g => g.name === p.name);
+    if(found) found.qty++;
+    else grouped.push({...p, qty:1});
+  });
+
+  document.getElementById("cartItems").innerHTML = grouped.length ? grouped.map(p => `
+    <div class="cart-item">
+      <b>${p.name}</b>${p.qty > 1 ? ` <span style="background:#22c55e;color:white;border-radius:999px;padding:2px 8px;font-size:12px">&times;${p.qty}</span>` : ''}
+      <button style="float:right;background:none;border:none;color:#555;font-size:18px;cursor:pointer;line-height:1" onclick="removeItem('${p.name.replaceAll("'","")}')">×</button>
+      <br><span style="font-size:13px;color:#2d6a4a">${p.cat} · ${p.price}</span>
+    </div>
+  `).join("") : "<p>El carrito está vacío.</p>";
+
+  const totalNum = grouped.reduce((acc, p) => {
+    const n = parseInt(p.price.replace(/\D/g,''));
+    return acc + (isNaN(n) ? 0 : n * p.qty);
+  }, 0);
+  const hayConsultar = grouped.some(p => p.price === 'Consultar');
+  const totalProductos = cart.length;
+
+  let totalHTML = `<span style="font-size:14px;font-weight:normal;color:#2d6a4a">${totalProductos} producto${totalProductos!==1?'s':''}</span><br>`;
+  if(totalNum > 0){
+    totalHTML += `$${totalNum.toLocaleString('es-AR')}`;
+    if(hayConsultar) totalHTML += `<span style="font-size:13px;font-weight:normal"> + consultas</span>`;
+  } else {
+    totalHTML += `<span style="font-size:16px">A consultar</span>`;
+  }
+  document.getElementById("total").innerHTML = totalHTML;
+
+  const lineas = grouped.map(p => {
+    const cant = p.qty > 1 ? ` x${p.qty}` : '';
+    const precio = p.price !== 'Consultar' ? ` — ${p.price}` : ' — (consultar precio)';
+    return `• ${p.name}${cant}${precio}`;
+  });
+  const resumen = totalNum > 0
+    ? `%0A%0A Total estimado: $${totalNum.toLocaleString('es-AR')}${hayConsultar?' + productos a consultar':''}`
+    : '';
+  const text = `Hola LimSur! Quiero consultar por:%0A%0A${lineas.join('%0A')}${resumen}`;
+  document.getElementById("wa").href = "https://wa.me/5492901501798?text=" + text;
+}
+
+function removeItem(name){
+  const idx = cart.reduce((found, p, i) => p.name.replaceAll("'","") === name ? i : found, -1);
+  if(idx !== -1){ cart.splice(idx,1); renderCart(); }
+}
+
+// ── Admin ──────────────────────────────────────
+let adminUnlocked = false;
+
+function openAdmin(){
+  document.getElementById("adminOverlay").style.display = "block";
+  document.body.style.overflow = "hidden";
+  if(adminUnlocked){
+    showPanel();
+  } else {
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("adminPanel").style.display = "none";
+    document.getElementById("loginPass").value = "";
+    document.getElementById("loginErr").style.display = "none";
+    setTimeout(() => document.getElementById("loginPass").focus(), 100);
+  }
+}
+
+function closeAdmin(){
+  document.getElementById("adminOverlay").style.display = "none";
+  document.body.style.overflow = "";
+}
+
+function tryLogin(){
+  const val = document.getElementById("loginPass").value;
+  if(val === ADMIN_PASS){
+    adminUnlocked = true;
+    document.getElementById("loginErr").style.display = "none";
+    showPanel();
+  } else {
+    document.getElementById("loginErr").style.display = "block";
+    document.getElementById("loginPass").value = "";
+    document.getElementById("loginPass").focus();
+  }
+}
+
+function showPanel(){
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("adminPanel").style.display = "block";
+  document.getElementById("adminSearch").value = "";
+  renderAdminTable();
+}
+
+function renderAdminTable(){
+  const q = document.getElementById("adminSearch").value.toLowerCase();
+  const list = products.filter(p => p.name.toLowerCase().includes(q));
+  document.getElementById("adminBody").innerHTML = list.map(p => `
+    <tr>
+      <td style="font-size:14px;font-weight:bold">${p.name}</td>
+      <td><span class="badge-cat">${p.cat}</span></td>
+      <td><input class="price-input" data-name="${p.name.replaceAll('"','')}" value="${p.price}" placeholder="Consultar"></td>
+    </tr>
+  `).join("");
+}
+
+function savePrices(){
+  // Leer todos los inputs (incluyendo los filtrados)
+  const inputs = document.querySelectorAll(".price-input");
+  const prices = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+
+  inputs.forEach(input => {
+    const name = input.dataset.name;
+    const val = input.value.trim() || "Consultar";
+    prices[name] = val;
+    // Actualizar en el array en memoria
+    const prod = products.find(p => p.name.replaceAll('"','') === name);
+    if(prod) prod.price = val;
+  });
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(prices));
+  renderProducts();
+  renderCart();
+
+  const msg = document.getElementById("savedMsg");
+  msg.style.display = "inline";
+  setTimeout(() => msg.style.display = "none", 2500);
+}
+
+function resetPrices(){
+  if(!confirm("¿Borrar todos los precios guardados y volver a «Consultar»?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  products.forEach(p => p.price = "Consultar");
+  renderAdminTable();
+  renderProducts();
+  renderCart();
+  const msg = document.getElementById("savedMsg");
+  msg.style.display = "inline";
+  msg.textContent = "✓ Precios restablecidos";
+  setTimeout(() => { msg.style.display = "none"; msg.textContent = "✓ ¡Guardado!"; }, 2500);
+}
+
+// Cerrar al hacer clic fuera del panel
+document.getElementById("adminOverlay").addEventListener("click", function(e){
+  if(e.target === this) closeAdmin();
+});
+
+document.getElementById("search").addEventListener("input", renderProducts);
+renderProducts();
+renderCart();
+</script>
+
+</body>
+</html>
